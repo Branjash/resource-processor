@@ -1,4 +1,5 @@
-# song-service
-CRUD service for Song record (metadata) management. Provides managing capabilities for maintaining some metadata about songs (artist, album, etc)
+# resource-processor
 
-NOTE! Run docker-compose file from root docker-compose folder.
+This service used to process MP3 source data. This service does not have a web interface and is used for data processing. Spring boot app, able to extract MP3 metadata for further storing of this data using songs metadata api.
+
+
