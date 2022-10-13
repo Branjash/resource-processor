@@ -27,7 +27,7 @@ public class KafkaConsumerService {
 
     @KafkaListener(topics = "${resource.kafka.topic}", containerFactory = "kafkaRetryListenerContainerFactory")
     public void resourceServiceListener(@Payload Resource resource, ConsumerRecord<String, Resource> cr) {
-        logger.info("Topic [resource-received] received message with id: {} and resource: {} ", resource.getId(), resource.toString());
+        logger.info("Topic {} received message with id: {} and resource: {} ", topic, resource.getId(), resource.toString());
         logger.info(cr.toString());
     }
 }
