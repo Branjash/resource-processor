@@ -43,7 +43,7 @@ public class KafkaConsumerConfig {
         jsonDeserializer.addTrustedPackages("*");
         Map<String, Object> properties = new HashMap<>(kafkaProperties.buildConsumerProperties());
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_DOC, jsonDeserializer);
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_DOC, JsonDeserializer.class);
         return properties;
     }
 
