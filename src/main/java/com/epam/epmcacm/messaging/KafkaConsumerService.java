@@ -55,20 +55,25 @@ public class KafkaConsumerService {
 
     @KafkaListener(topics = "${resource.kafka.topic}", containerFactory = "kafkaRetryListenerContainerFactory")
     public void resourceServiceListener(ConsumerRecord<String, String> consumerRecord) throws IOException, InvalidDataException, UnsupportedTagException {
-        logger.info("Kafka Topic {} received message with id: {} and resource: {} ",topic, consumerRecord.key(), consumerRecord.value());
+        logger.info("Resource: {} successfully uploaded,message received from kafka topic: {}, topic key: {} ",consumerRecord.value(), topic, consumerRecord.key());
         payload = mapper.readValue(consumerRecord.value(), Resource.class);
         latch.countDown();
-        saveSongMetadata();
+        byte [] resourceBinaryData = getResourceBinaryDataByResourceId(payload.getId());
+        saveSongMetadata(resourceBinaryData);
     }
 
-    private Song saveSongMetadata() throws InvalidDataException, UnsupportedTagException, IOException {
-        ResponseEntity<ByteArrayResource> result = resourceServiceRestClient.getResourceById(payload.getId());
-        if(result.getStatusCode() == HttpStatus.OK) {
-            Song songMetadataDto = Song.createSongDTOForClientRequest(payload, result.getBody().getByteArray());
-            songServiceRestClient.saveSong(songMetadataDto);
-            return songMetadataDto;
-        }
-        throw new InvalidDataException("Didn't get resource binary to create song metadata!");
+    private Song saveSongMetadata(byte [] resourceBinaryData) throws InvalidDataException, UnsupportedTagException, IOException {
+        Song songMetadataDto = Song.createSongDTOForClientRequest(payload, resourceBinaryData);
+        songServiceRestClient.saveSong(songMetadataDto);
+        logger.info("Successfully saved song metadata with song-api: {}", songMetadataDto);
+        return songMetadataDto;
+    }
+
+    private byte [] getResourceBinaryDataByResourceId(Long resourceId) throws InvalidDataException {
+        ResponseEntity<ByteArrayResource> result = resourceServiceRestClient.getResourceById(resourceId);
+        if(result.getStatusCode() != HttpStatus.OK) throw new InvalidDataException("Didn't get resource binary to create song metadata!");
+        if(!result.getBody().exists()) throw new InvalidDataException("Resource binary data response is empty!");
+        return result.getBody().getByteArray();
     }
 
     public void resetLatch() {

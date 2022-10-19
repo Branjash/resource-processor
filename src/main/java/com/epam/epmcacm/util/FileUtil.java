@@ -48,7 +48,7 @@ public class FileUtil {
         if (!mp3file.hasId3v2Tag()) throw new InvalidMp3FileException("File doesn't have appropriate attributes - artist,album,year,length...");
         Map<FileAttribute, String> result = new HashMap<>();
         ID3v2 id3v2Tag = mp3file.getId3v2Tag();
-        result.put(FileAttribute.TRACK, mp3file.getFilename());
+        result.put(FileAttribute.TRACK, FilenameUtils.getBaseName(mp3file.getFilename()));
         result.put(FileAttribute.ARTIST, id3v2Tag.getArtist());
         result.put(FileAttribute.ALBUM, id3v2Tag.getAlbum());
         result.put(FileAttribute.YEAR, id3v2Tag.getYear());
