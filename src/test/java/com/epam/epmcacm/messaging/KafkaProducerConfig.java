@@ -1,4 +1,4 @@
-package com.epam.epmcacm.resourceprocessor.messaging;
+package com.epam.epmcacm.messaging;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;

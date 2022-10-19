@@ -1,7 +1,7 @@
-package com.epam.epmcacm.resourceprocessor.messaging;
+package com.epam.epmcacm.messaging;
 
-import com.epam.epmcacm.messaging.KafkaConsumerService;
 import com.epam.epmcacm.model.Resource;
+import com.epam.epmcacm.model.Song;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +29,7 @@ public class KafkaConsumerServiceTest {
     @Value("${resource.kafka.topic}")
     private String topic;
 
+
     @Test
     public void givenEmbeddedKafkaBroker_whenSendingWithSimpleProducer_thenMessageReceived() throws Exception {
         Resource resource = produceAndGetTestRecordForConsumption();
@@ -39,7 +40,7 @@ public class KafkaConsumerServiceTest {
 
     private Resource produceAndGetTestRecordForConsumption() {
         Resource resource = new Resource();
-        resource.setId(5);
+        resource.setId(0l);
         producer.send(topic, resource);
         return resource;
     }
