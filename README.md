@@ -6,3 +6,6 @@ Before starting Spring Boot app, initialize Kafka messaging service using docker
 ```bash
 docker-compose up -d
 ```
+- Added `KafkaConsumerService` and it's configurational class `KafkaConsumerConfiguration` to enable kafka template factory and other settings
+- Added REST Client implementation for communicating synchronously with `resource-service`(https://github.com/Branjash/resource-service) application and `songs-service`(https://github.com/Branjash/song-service) application
+- Added test coverage, but will be completed for next modules.
