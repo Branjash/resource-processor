@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Component
-@FeignClient(name = "songs-api",value = "songs-api", url = "${rest.client.songs.api.url}")
+@FeignClient(name = "songs-api",value = "songs-api", url = "${rest.client.songs-api.url}")
 public interface SongServiceRestClient {
 
     @GetMapping("{id}")

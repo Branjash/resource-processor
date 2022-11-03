@@ -1,0 +1,39 @@
+app-config:
+  port: 8085
+  api-gateway: http://eureka-client:8088
+  kafka-address: kafka:9092
+  kafka-group-id: resource-group
+  kafka-topic: resource-topic
+
+server:
+  port: ${app-config.port}
+
+  # Kafka
+resource:
+  kafka:
+    topic: ${app-config.kafka-topic}
+
+
+spring:
+  kafka:
+    bootstrap-servers: ${app-config.kafka-address}
+    consumer:
+      group-id: ${app-config.kafka-group-id}
+
+  # REST Client
+feign:
+  client:
+    config:
+      songs-api:
+        connect-timeout: 20000
+        read-timeout: 20000
+      resource-api:
+        connect-timeout: 20000
+        read-timeout: 20000
+
+rest:
+  client:
+    resources-api:
+      url: ${app-config.api-gateway}/resources
+    songs-api:
+      url: ${app-config.api-gateway}/songs

@@ -1,22 +1,28 @@
 version: '3.6'
 services:
-  zookeeper:
-    container_name: zookeeper
-    image: wurstmeister/zookeeper
+
+  eureka-service:
+    image: eureka-service-local-image
     ports:
-      - "2181:2181"
+      - "8761:8761"
     networks:
       - resource-network
 
-  kafka:
-    container_name: kafka
-    image: wurstmeister/kafka
+  eureka-client:
+    image: eureka-client-local-image
     ports:
-      - "9092:9092"
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      - "8088:8088"
+    depends_on:
+      - eureka-service
+    networks:
+      - resource-network
+
+  resource-processor-service:
+    image: resource-processor-service-local-image
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka-client
     networks:
       - resource-network
 

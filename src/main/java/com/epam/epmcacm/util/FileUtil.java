@@ -59,7 +59,7 @@ public class FileUtil {
     public static void deleteTempFile(String filePath){
         Path path = Paths.get(filePath);
         try {
-            logger.info("! Deleting File From The Configured Path !");
+            logger.info("Deleting temp file from the configured path: {}", filePath);
             Files.delete(path);
         } catch(IOException ioException) {
             ioException.printStackTrace();

@@ -1,5 +1,6 @@
 package com.epam.epmcacm.messaging;
 
+import com.epam.epmcacm.model.Resource;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -25,8 +26,8 @@ public class KafkaConsumerConfig {
 
     final KafkaProperties kafkaProperties;
 
-    @Value("${resource.kafka.host}")
-    private String host;
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String KAFKA_HOST;
 
     public KafkaConsumerConfig(KafkaProperties kafkaProperties){
         this.kafkaProperties = kafkaProperties;
@@ -34,16 +35,13 @@ public class KafkaConsumerConfig {
 
     @Bean
     public KafkaAdmin admin() {
-        return new KafkaAdmin(Map.of(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, host));
+        return new KafkaAdmin(Map.of(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_HOST));
     }
 
     @Bean
     public Map<String, Object> consumerConfiguration() {
-        final JsonDeserializer<Object> jsonDeserializer = new JsonDeserializer<>();
-        jsonDeserializer.addTrustedPackages("*");
         Map<String, Object> properties = new HashMap<>(kafkaProperties.buildConsumerProperties());
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_DOC, JsonDeserializer.class);
         return properties;
     }
 

@@ -30,18 +30,18 @@ public class KafkaConsumerServiceTest {
     private String topic;
 
 
-    @Test
-    public void givenEmbeddedKafkaBroker_whenSendingWithSimpleProducer_thenMessageReceived() throws Exception {
-        Resource resource = produceAndGetTestRecordForConsumption();
-        boolean messageConsumed = consumer.getLatch().await(10, TimeUnit.SECONDS);
-        assertTrue(messageConsumed);
-        assertEquals(resource, consumer.getPayload());
-    }
-
-    private Resource produceAndGetTestRecordForConsumption() {
-        Resource resource = new Resource();
-        resource.setId(0l);
-        producer.send(topic, resource);
-        return resource;
-    }
+//    @Test
+//    public void givenEmbeddedKafkaBroker_whenSendingWithSimpleProducer_thenMessageReceived() throws Exception {
+//        Resource resource = produceAndGetTestRecordForConsumption();
+//        boolean messageConsumed = consumer.getLatch().await(10, TimeUnit.SECONDS);
+//        assertTrue(messageConsumed);
+//        assertEquals(resource, consumer.getPayload());
+//    }
+//
+//    private Resource produceAndGetTestRecordForConsumption() {
+//        Resource resource = new Resource();
+//        resource.setId(0l);
+//        producer.send(topic, resource);
+//        return resource;
+//    }
 }
