@@ -11,6 +11,9 @@ public class Resource {
     @JsonProperty
     private String name;
 
+    @JsonProperty
+    private Long storageId;
+
     public Resource() {}
 
     public Resource(String name) {
@@ -33,6 +36,14 @@ public class Resource {
         this.name = fileName;
     }
 
+    public Long getStorageId() {
+        return storageId;
+    }
+
+    public void setStorageId(Long storageId) {
+        this.storageId = storageId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -51,6 +62,7 @@ public class Resource {
         return "Resource{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", storageId=" + storageId +
                 '}';
     }
 }

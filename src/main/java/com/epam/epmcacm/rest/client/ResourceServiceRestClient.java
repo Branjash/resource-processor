@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@FeignClient(name = "resource-api",value = "resource-api", url = "${rest.client.resources-api.url}")
+@FeignClient(name = "resource-api",value = "resource-api", url = "${rest.client.resource-api.url}")
 public interface ResourceServiceRestClient {
 
         @PostMapping

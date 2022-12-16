@@ -4,6 +4,7 @@ import com.epam.epmcacm.model.Song;
 import com.epam.epmcacm.rest.client.ResourceServiceRestClient;
 import com.epam.epmcacm.model.Resource;
 import com.epam.epmcacm.rest.client.SongServiceRestClient;
+import com.epam.epmcacm.rest.client.StorageServiceRestClient;
 import com.epam.epmcacm.util.FileUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,17 +41,20 @@ public class KafkaConsumerService {
 
     ResourceServiceRestClient resourceServiceRestClient;
 
+    StorageServiceRestClient storageServiceRestClient;
+
     private CountDownLatch latch = new CountDownLatch(1);
     private Resource payload;
 
     @Value("${resource.kafka.topic}")
     private String topic;
 
-    public KafkaConsumerService(KafkaTemplate kafka, ObjectMapper mapper, SongServiceRestClient songServiceRestClient, ResourceServiceRestClient resourceServiceRestClient) {
+    public KafkaConsumerService(KafkaTemplate kafka, ObjectMapper mapper, SongServiceRestClient songServiceRestClient, ResourceServiceRestClient resourceServiceRestClient, StorageServiceRestClient storageServiceRestClient) {
         this.kafka = kafka;
         this.mapper = mapper;
         this.songServiceRestClient = songServiceRestClient;
         this.resourceServiceRestClient = resourceServiceRestClient;
+        this.storageServiceRestClient = storageServiceRestClient;
     }
 
     @KafkaListener(topics = "${resource.kafka.topic}", containerFactory = "kafkaRetryListenerContainerFactory")
@@ -58,7 +62,9 @@ public class KafkaConsumerService {
         logger.info("Resource: {} successfully uploaded,message received from kafka topic: {}, topic key: {} ",consumerRecord.value(), topic, consumerRecord.key());
         payload = mapper.readValue(consumerRecord.value(), Resource.class);
         latch.countDown();
-        byte [] resourceBinaryData = getResourceBinaryDataByResourceId(payload.getId());
+        updateResourceInStorage(payload.getStorageId());
+        logger.info("Resource updated to Permanent in the storage!");
+        byte [] resourceBinaryData = getResourceBinaryDataByStorageId(payload.getStorageId());
         saveSongMetadata(resourceBinaryData);
     }
 
@@ -69,8 +75,13 @@ public class KafkaConsumerService {
         return songMetadataDto;
     }
 
-    private byte [] getResourceBinaryDataByResourceId(Long resourceId) throws InvalidDataException {
-        ResponseEntity<ByteArrayResource> result = resourceServiceRestClient.getResourceById(resourceId);
+    private void updateResourceInStorage(Long id) throws InvalidDataException {
+        ResponseEntity<?> result = storageServiceRestClient.updateResourceInStorageToPermanent(id);
+        if(result.getStatusCode() != HttpStatus.OK) throw new InvalidDataException("Didn't update binary to create song metadata!");
+    }
+
+    private byte [] getResourceBinaryDataByStorageId(Long storageId) throws InvalidDataException {
+        ResponseEntity<ByteArrayResource> result = storageServiceRestClient.getResourceFromStorage(storageId);
         if(result.getStatusCode() != HttpStatus.OK) throw new InvalidDataException("Didn't get resource binary to create song metadata!");
         if(!result.getBody().exists()) throw new InvalidDataException("Resource binary data response is empty!");
         return result.getBody().getByteArray();

@@ -1,28 +1,12 @@
 version: '3.6'
 services:
 
-  eureka-service:
-    image: eureka-service-local-image
-    ports:
-      - "8761:8761"
-    networks:
-      - resource-network
-
-  eureka-client:
-    image: eureka-client-local-image
-    ports:
-      - "8088:8088"
-    depends_on:
-      - eureka-service
-    networks:
-      - resource-network
-
   resource-processor-service:
     image: resource-processor-service-local-image
+    build:
+      dockerfile: Dockerfile
     ports:
       - "8085:8085"
-    depends_on:
-      - eureka-client
     networks:
       - resource-network
 
